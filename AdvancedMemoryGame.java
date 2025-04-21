@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 
-public class MemoryGame extends JFrame {
+public class AdvancedMemoryGame extends JFrame {
     private final JButton[][] buttons = new JButton[4][4];
     private final String[][] letters = new String[4][4];
     private final boolean[][] matched = new boolean[4][4];
@@ -21,10 +20,10 @@ public class MemoryGame extends JFrame {
     private JComboBox<String> themeComboBox;
 
     private String currentTheme = "Fruits";  // Default theme
-    private final String imagePathPrefix = "Flip Game Task/Assets/Images/";
+    private final String imagesPathPrefix = "Flip Game Task/Assets/Images/";
     private String setDirectoryPath;
 
-    public MemoryGame() {
+    public AdvancedMemoryGame() {
         setWorkingDirectoryToDesktop();
 
         setTitle("Memory Match Game");
@@ -134,10 +133,27 @@ public class MemoryGame extends JFrame {
             for (int j = 0; j < 4; j++) {
                 String letter = it.next();
                 letters[i][j] = letter;
+
                 JButton btn = new JButton("");
                 btn.setPreferredSize(new Dimension(80, 80));  // Can scale based on screen if needed
                 btn.setFont(btn.getFont().deriveFont(Font.BOLD, 24f)); // Allows dynamic font tweaks later if needed
                 buttons[i][j] = btn;
+
+                // === Set the BACK image ===
+                String backImagePath = setDirectoryPath + imagesPathPrefix + "Back Card" + "/" + "Back Card Designs_" + currentTheme + ".png";
+                File backFile = new File(backImagePath);
+                if (backFile.exists()) {
+                    SwingUtilities.invokeLater(() -> {
+                        ImageIcon icon = new ImageIcon(backImagePath);
+                        Image img = icon.getImage();
+                        Image scaledImg = img.getScaledInstance(btn.getWidth(), btn.getHeight(), Image.SCALE_SMOOTH);
+                        btn.setIcon(new ImageIcon(scaledImg));
+                        btn.setText("");
+                    });
+                } else {
+                    btn.setText("");
+                }
+
                 int row = i, col = j;
                 btn.addActionListener(e -> handleClick(row, col));
                 grid.add(btn);
@@ -152,10 +168,10 @@ public class MemoryGame extends JFrame {
         if (isChecking || matched[row][col]) return;
 
         JButton btn = buttons[row][col];
-        String filePath = setDirectoryPath + imagePathPrefix + currentTheme + "/" + "Image_" + currentTheme + " " + letters[row][col] + ".png";
-        File file = new File(filePath);
-        if (file.exists()) {
-            ImageIcon icon = new ImageIcon(filePath);
+        String frontImagePath = setDirectoryPath + imagesPathPrefix + "Front Card" + "/" + currentTheme + "/" + "Image_" + currentTheme + " " + letters[row][col] + ".png";
+        File front = new File(frontImagePath);
+        if (front.exists()) {
+            ImageIcon icon = new ImageIcon(frontImagePath);
             Image img = icon.getImage();
             Image scaledImg = img.getScaledInstance(btn.getWidth(), btn.getHeight(), Image.SCALE_SMOOTH);
             btn.setIcon(new ImageIcon(scaledImg));
@@ -180,10 +196,25 @@ public class MemoryGame extends JFrame {
                 checkWin();
             } else {
                 new Timer(1000, e -> {
-                    first.setIcon(null);
-                    first.setText("");
-                    second.setIcon(null);
-                    second.setText("");
+                    // Get back image
+                    String backImagePath = setDirectoryPath + imagesPathPrefix + "Back Card" + "/" + "Back Card Designs_" + currentTheme + ".png";
+                    File back = new File(backImagePath);
+                    if (back.exists()) {
+                        ImageIcon icon = new ImageIcon(backImagePath);
+                        Image img = icon.getImage();
+    
+                        Image scaledFirst = img.getScaledInstance(first.getWidth(), first.getHeight(), Image.SCALE_SMOOTH);
+                        Image scaledSecond = img.getScaledInstance(second.getWidth(), second.getHeight(), Image.SCALE_SMOOTH);
+    
+                        first.setIcon(new ImageIcon(scaledFirst));
+                        second.setIcon(new ImageIcon(scaledSecond));
+                    } else {
+                        first.setText("");
+                        second.setText("");
+                        first.setIcon(null);
+                        second.setIcon(null);
+                    }
+    
                     resetSelection();
                     ((Timer) e.getSource()).stop();
                 }).start();
@@ -219,6 +250,6 @@ public class MemoryGame extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MemoryGame());
+        SwingUtilities.invokeLater(() -> new AdvancedMemoryGame());
     }
 }
