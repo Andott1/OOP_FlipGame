@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 
-public class MemoryGame extends JFrame {
+public class AdvancedMemoryGame extends JFrame {
     private final JButton[][] buttons = new JButton[4][4];
     private final String[][] letters = new String[4][4];
     private final boolean[][] matched = new boolean[4][4];
@@ -24,7 +23,7 @@ public class MemoryGame extends JFrame {
     private final String imagePathPrefix = "Flip Game Task/Assets/Images/";
     private String setDirectoryPath;
 
-    public MemoryGame() {
+    public AdvancedMemoryGame() {
         setWorkingDirectoryToDesktop();
 
         setTitle("Memory Match Game");
@@ -219,6 +218,6 @@ public class MemoryGame extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MemoryGame());
+        SwingUtilities.invokeLater(() -> new AdvancedMemoryGame());
     }
 }
